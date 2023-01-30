@@ -2,8 +2,8 @@ import InvalidCpfException from "../exceptions/InvalidCpfException";
 
 export default class CpfValidator {
     private DOCUMENT_LENGTH: number = 11;
-    private LEFT_DIGIT_SEQUECENCE: number = 10;
-    private RIGHT_DIGIT_SEQUECENCE: number = 11;
+    private LEFT_DIGIT_SEQUENCE: number = 10;
+    private RIGHT_DIGIT_SEQUENCE: number = 11;
 
     validate(content: String): void {
         if (!content) throw new InvalidCpfException;
@@ -37,8 +37,8 @@ export default class CpfValidator {
     }
 
     private checkDigits(document: String): boolean {
-        const leftDigit = this.calculateDigitBySide(document, this.LEFT_DIGIT_SEQUECENCE);
-        const rightDigit = this.calculateDigitBySide(document, this.RIGHT_DIGIT_SEQUECENCE);
+        const leftDigit = this.calculateDigitBySide(document, this.LEFT_DIGIT_SEQUENCE);
+        const rightDigit = this.calculateDigitBySide(document, this.RIGHT_DIGIT_SEQUENCE);
         const documentDigits = document.slice(-2);
         return documentDigits === `${leftDigit}${rightDigit}`;
     }
