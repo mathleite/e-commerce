@@ -1,5 +1,6 @@
 import Product from "./Product";
 import Cpf from "./Cpf";
+import InvalidCouponQuantityException from "./exceptions/InvalidCouponQuantityException";
 
 export default class Order {
     private readonly products: Product[] = [];
@@ -16,14 +17,16 @@ export default class Order {
     }
 
     getTotal(): number {
-        const total: number = this.products.reduce((accumulator, product) => accumulator + product.amount, 0);
+        const total: number = this.products.reduce((accumulator, product) => accumulator + (
+            product.amount * product.quantity
+        ), 0);
         const discountAmount = this.discountPercent * total;
         if (this.discountPercent && discountAmount <= total) return total - discountAmount;
         return total;
     }
 
     addDiscount(discountPercent: number): void {
-        if (this.discountPercent) throw new Error("Order can't has more than one discount");
+        if (this.discountPercent) throw new InvalidCouponQuantityException;
         this.discountPercent += discountPercent;
     }
 }

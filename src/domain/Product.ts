@@ -1,3 +1,3 @@
 export default class Product {
-    constructor(readonly description: String, readonly quantity: number, readonly amount: number) {}
+    constructor(readonly description: string, readonly quantity: number, readonly amount: number) {}
 }

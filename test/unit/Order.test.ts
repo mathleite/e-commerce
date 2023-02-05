@@ -6,51 +6,71 @@
 import Order from "../../src/domain/Order";
 import Product from "../../src/domain/Product";
 import Cpf from "../../src/domain/Cpf";
+import ProductRepository from "../../src/database/ProductRepository";
+import InMemoryDatabase from "../../src/database/InMemoryDatabase";
 
-test("Deve criar um Pedido com um Produto", function () {
+const repository = new ProductRepository(new InMemoryDatabase);
+beforeEach(() => {
+    repository.create(new Product("Clean Code Book", 1, 80));
+    repository.create(new Product("Clean Architecture Book", 1, 120));
+    repository.create(new Product("DDD Book", 1, 100.65));
+    return repository;
+})
+test("Should create a Order with one Product", function () {
     const order = new Order(new Cpf('700.957.100-78'));
-    order.addProduct(new Product("Clean Code Book", 1, 80));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Code Book"));
     expect(1).toBe(order.getProducts().length);
 });
 
-test("Deve criar um Pedido vazio", function () {
+test("Should create a Order without Products", function () {
     const order = new Order(new Cpf('700.957.100-78'));
     expect(0).toBe(order.getProducts().length);
 });
 
-test("Deve calcular o total do pedido", function () {
+test("Should calc the Order total", function () {
     const order = new Order(new Cpf('700.957.100-78'));
-    order.addProduct(new Product("Clean Code Book", 1, 80));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Code Book"));
     expect(80).toBe(order.getTotal());
 });
 
-test("Deve calcular o total do pedido com mais de 2 produtos", function () {
+test("Should cal the Order total with more than one Product", function () {
     const order = new Order(new Cpf('700.957.100-78'));
-    order.addProduct(new Product("Clean Code Book", 1, 80));
-    order.addProduct(new Product("Clean Architecture Book", 1, 120));
-    order.addProduct(new Product("DDD Book", 1, 100.65));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Code Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Architecture Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("DDD Book"));
     expect(300.65).toBe(order.getTotal());
 });
 
-test("Deve calcular o total do pedido com desconto de 10%", function () {
+test("Should calc the Order total using a 10% coupon", function () {
     const order = new Order(new Cpf('700.957.100-78'));
-    order.addProduct(new Product("Clean Code Book", 1, 80));
-    order.addProduct(new Product("Clean Architecture Book", 1, 120));
-    order.addProduct(new Product("DDD Book", 1, 100.65));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Code Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Architecture Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("DDD Book"));
     order.addDiscount(0.1);
     expect(270.585).toBe(order.getTotal());
 });
 
-test("Não Deve dar desconto se o mesmo for maior ou igual do que o total do Pedido", function () {
+test("Should not apply a discount that is more than 100%", function () {
     const order = new Order(new Cpf('700.957.100-78'));
-    order.addProduct(new Product("Clean Code Book", 1, 80));
-    order.addProduct(new Product("Clean Architecture Book", 1, 120));
-    order.addProduct(new Product("DDD Book", 1, 100.65));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Code Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("Clean Architecture Book"));
+    // @ts-ignore
+    order.addProduct(repository.findByDescription("DDD Book"));
     order.addDiscount(1.2);
     expect(300.65).toBe(order.getTotal());
 });
 
-test("Deve ocorrer uma Exception quando adicionar mais de 1 disconto no Pedido", function () {
+test("Should not apply more than one discount", function () {
     const order = new Order(new Cpf('700.957.100-78'));
 
     expect(() => {
